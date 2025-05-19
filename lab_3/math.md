@@ -25,4 +25,3 @@ $u(x) \approx y(x) = \phi_0(x) + \displaystyle\sum_{i=1}^{n} c_i \phi_i(x)$,
 Для определения $c_i$ составляется и решается система уравнений вида:
 
 $\displaystyle\int_{a}^{b} (A[y(x)]-f(x))\phi_{i}(x)dx = 0, i=\overline{1, n}$
-
