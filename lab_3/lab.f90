@@ -446,18 +446,6 @@ program lab
          ymin = min(y(i+1), ymin)
          ymax = max(y(i+1), ymax)
       end do
-      print *, "y(points_cnt)"
-      print *, y(points_cnt)
-      print *, "y(points_cnt-1)"
-      print *, y(points_cnt-1)
-      print *, "x(points_cnt)"
-      print *, x(points_cnt)
-      print *, "x(points_cnt-1)"
-      print *, x(points_cnt-1)
-      print *, "y(points_cnt) - y(points_cnt-1)"
-      print *, y(points_cnt) - y(points_cnt-1)
-      print *, "x(points_cnt) - x(points_cnt-1)"
-      print *, x(points_cnt) - x(points_cnt-1)
       print *, (y(points_cnt) - y(points_cnt-1))/(x(points_cnt) - x(points_cnt-1))
       call plscolbg(255, 255, 255)
       call plscol0(1, 0, 0, 0)
