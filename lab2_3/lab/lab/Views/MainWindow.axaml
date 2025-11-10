@@ -1,0 +1,87 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:lab.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="using:OxyPlot.Avalonia"
+        xmlns:local="clr-namespace:lab.Models"
+        xmlns:conv="clr-namespace:lab.Converters"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="lab.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="lab">
+
+    <Window.Resources>
+        <conv:DistributionEnumToBoolConverter x:Key="DistributionEnumToBoolConverter" />
+    </Window.Resources>
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+    <Grid ColumnDefinitions="1*, 2*" RowDefinitions="*">
+        <StackPanel Margin="20" Spacing="10" VerticalAlignment="Stretch">
+            <TextBlock Text="Выберите распределение:"
+                       FontSize="16"
+                       FontWeight="Bold" />
+            <StackPanel HorizontalAlignment="Center">
+                <RadioButton Content="Равномерное"
+                             FontSize="16"
+                             FontWeight="DemiBold"
+                             GroupName="DistributionGroup"
+                             IsChecked="{Binding Distribution, Converter={StaticResource DistributionEnumToBoolConverter}, ConverterParameter={x:Static local:DistributionType.Uniform}}" />
+                <RadioButton Content="Пуассоновское"
+                             FontSize="16"
+                             FontWeight="DemiBold"
+                             GroupName="DistributionGroup"
+                             IsChecked="{Binding Distribution, Converter={StaticResource DistributionEnumToBoolConverter}, ConverterParameter={x:Static local:DistributionType.Poisson}}" />
+                <RadioButton Content="Экспоненциальное"
+                             FontSize="16"
+                             FontWeight="DemiBold"
+                             GroupName="DistributionGroup"
+                             IsChecked="{Binding Distribution, Converter={StaticResource DistributionEnumToBoolConverter}, ConverterParameter={x:Static local:DistributionType.Exponential}}" />
+                <RadioButton Content="Гауссово"
+                             FontSize="16"
+                             FontWeight="DemiBold"
+                             GroupName="DistributionGroup"
+                             IsChecked="{Binding Distribution, Converter={StaticResource DistributionEnumToBoolConverter}, ConverterParameter={x:Static local:DistributionType.Gaussian}}" />
+                <RadioButton Content="Распределение Эрланга"
+                             FontSize="16"
+                             FontWeight="DemiBold"
+                             GroupName="DistributionGroup"
+                             IsChecked="{Binding Distribution, Converter={StaticResource DistributionEnumToBoolConverter}, ConverterParameter={x:Static local:DistributionType.Erlang}}" />
+            </StackPanel>
+            <TextBlock Text="Математическое ожидание:"
+                       FontSize="16"
+                       FontWeight="Bold" />
+            <TextBox FontSize="14"
+                     Text="{Binding Mean, StringFormat='{}{0:F2}'}" />
+            <TextBlock Text="Дисперсия:"
+                       FontSize="16"
+                       FontWeight="Bold" />
+            <TextBox FontSize="14"
+                     Text="{Binding Variance, StringFormat='{}{0:F2}'}" />
+            <Button IsEnabled="True"
+                    HorizontalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Background="CornflowerBlue"
+                    CornerRadius="10"
+                    Command="{Binding GenerateCommand}">
+                <TextBlock Text="Построить графики"
+                           FontWeight="Bold"
+                           FontSize="16"
+                           TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="Black" />
+            </Button>
+        </StackPanel>
+        <StackPanel Grid.Column="1">
+            <oxy:PlotView Model="{Binding DensityPlot}" Margin="10" />
+        </StackPanel>
+    </Grid>
+
+
+</Window>
