@@ -2,20 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
-using Avalonia.Media;
+using System.Reactive.Linq;
 using lab.Models;
-using OxyPlot;
-using OxyPlot.Axes;
-using OxyPlot.Series;
 using ReactiveUI;
 
 namespace lab.ViewModels;
 
 public class MainWindowViewModel : ReactiveObject
 {
-    private PlotModel _densityPlot;
+    private List<Point> _densityPlot;
+    private string _densityPlotTitle;
     private DistributionType _distribution;
-    private PlotModel _distributionPlot;
+    private List<Point> _distributionPlot;
+    private string _distributionPlotTitle;
     private bool _hasValidationError;
     private double _mean;
     private double _variance;
@@ -26,7 +25,20 @@ public class MainWindowViewModel : ReactiveObject
         Mean = 0;
         Variance = 1;
 
-        GenerateCommand = ReactiveCommand.Create(GenerateGraphs);
+        // Инициализируем графики
+        DensityPlot = new List<Point>();
+        DistributionPlot = new List<Point>();
+        DensityPlotTitle = "";
+
+        // Создаем команду с указанием UI scheduler
+        // Используем Observable.Return для создания observable, который выполняется в UI потоке
+        var canExecute = Observable.Return(true)
+            .ObserveOn(RxApp.MainThreadScheduler);
+
+        GenerateCommand = ReactiveCommand.Create(
+            GenerateGraphs,
+            canExecute,
+            RxApp.MainThreadScheduler);
     }
 
     public bool HasValidationError
@@ -38,16 +50,28 @@ public class MainWindowViewModel : ReactiveObject
     public bool HasMeanError { get; private set; }
     public bool HasVarianceError { get; private set; }
 
-    public PlotModel DensityPlot
+    public List<Point> DensityPlot
     {
         get => _densityPlot;
         set => this.RaiseAndSetIfChanged(ref _densityPlot, value);
     }
 
-    public PlotModel DistributionPlot
+    public List<Point> DistributionPlot
     {
         get => _distributionPlot;
         set => this.RaiseAndSetIfChanged(ref _distributionPlot, value);
+    }
+
+    public string DensityPlotTitle
+    {
+        get => _densityPlotTitle;
+        private set => this.RaiseAndSetIfChanged(ref _densityPlotTitle, value);
+    }
+
+    public string DistributionPlotTitle
+    {
+        get => _distributionPlotTitle;
+        private set => this.RaiseAndSetIfChanged(ref _distributionPlotTitle, value);
     }
 
     public DistributionType Distribution
@@ -91,7 +115,8 @@ public class MainWindowViewModel : ReactiveObject
         if (HasValidationError)
             return;
 
-        DensityPlot = CreateDensityPlot(DistributionName());
+        CreateDensityPlot(DistributionName());
+        CreateDistributionPlot(DistributionName());
     }
 
     private void ResetValidation()
@@ -103,7 +128,6 @@ public class MainWindowViewModel : ReactiveObject
         this.RaisePropertyChanged(nameof(HasMeanError));
         this.RaisePropertyChanged(nameof(HasVarianceError));
     }
-
 
     private void ValidateMathematicalConditions()
     {
@@ -119,130 +143,204 @@ public class MainWindowViewModel : ReactiveObject
             HasValidationError = true;
             HasMeanError = true;
         }
-    }
 
-
-    private PlotModel CreateDensityPlot(string distributionName)
-    {
-        var plot = new PlotModel
+        if (Distribution == DistributionType.Poisson && Math.Abs(Mean - Variance) > 1e-6)
         {
-            Title =
-                $"{distributionName} график функции {(_distribution != DistributionType.Poisson ? "плотности" : "вероятности")}",
-            TitleFontSize = 14,
-            TitleFontWeight = FontWeights.Bold
-        };
-
-        var series = new LineSeries
-        {
-            Title = "f(x)",
-            Color = OxyColors.Black,
-            StrokeThickness = 2
-        };
-
-        var points = GenerateDensityPoints();
-        
-        foreach (var point in points)
-        {
-            series.Points.Add(point);
+            HasValidationError = true;
+            HasMeanError = true;
+            HasVarianceError = true;
         }
-            
-            
-        plot.Axes.Add(new LinearAxis
-        {
-            Position = AxisPosition.Bottom,
-            Title = "x",
-            MajorGridlineStyle = LineStyle.Solid
-        });
-            
-        plot.Axes.Add(new LinearAxis
-        {
-            Position = AxisPosition.Left,
-            Title = "f(x)",
-            MajorGridlineStyle = LineStyle.Solid,
-            Minimum = 0,
-            Maximum = 1
-        });
-            
-        return plot;
     }
 
-    private DataPoint[] GenerateUniformDensity()
+    private void CreateDensityPlot(string distributionName)
     {
-        // Для U(a,b): mean = (a+b)/2, variance = (b-a)²/12
+        var points = GenerateDensityPoints();
+
+        // Сохраняем данные для графика
+        DensityPlot = points;
+
+        // Сохраняем заголовок графика
+        DensityPlotTitle =
+            $"{distributionName} график функции {(_distribution != DistributionType.Poisson ? "плотности" : "вероятности")}";
+    }
+
+    private List<Point> GenerateUniformDensity()
+    {
         var a = _mean - Math.Sqrt(3 * _variance);
         var b = _mean + Math.Sqrt(3 * _variance);
         var height = 1.0 / (b - a);
 
-        var points = new List<DataPoint>();
+        var points = new List<Point>();
 
-        for (var x = 2 * a - b; x < a; x += 0.01) points.Add(new DataPoint(x, 0));
+        points.Add(new Point(2 * a - b, 0));
 
-        points.Add(new DataPoint(a, 0));
-        points.Add(new DataPoint(a, height));
-        points.Add(new DataPoint(b, height));
-        points.Add(new DataPoint(b, 0));
+        points.Add(new Point(a, 0));
+        points.Add(new Point(a, height));
+        points.Add(new Point(b, height));
+        points.Add(new Point(b, 0));
 
-        for (var x = b + 0.01; x < 2 * b - a; x += 0.01) points.Add(new DataPoint(x, 0));
+        points.Add(new Point(2 * b - a, 0));
 
-        return points.ToArray();
+        return points;
     }
 
-    private DataPoint[] GenerateGaussianDensity()
+    private List<Point> GenerateUniformDistribution()
+    {
+        var a = _mean - Math.Sqrt(3 * _variance);
+        var b = _mean + Math.Sqrt(3 * _variance);
+
+        var points = new List<Point>();
+
+        points.Add(new Point(2 * a - b, 0));
+
+        points.Add(new Point(a, 0));
+        points.Add(new Point(b, 1));
+
+        points.Add(new Point(2 * b - a, 1));
+
+        return points;
+    }
+
+    private List<Point> GenerateGaussianDensity()
     {
         var l = _mean - 4 * Math.Sqrt(_variance);
         var r = _mean + 4 * Math.Sqrt(_variance);
 
-        var points = new List<DataPoint>();
+        var points = new List<Point>();
 
         for (var x = l; x <= r; x += 0.01)
-            points.Add(new DataPoint(x,
-                1 / (Math.Sqrt(_variance * 2 * Math.PI) * Math.Exp(-Math.Pow(x - _mean, 2) / (2 * _variance)))));
+            points.Add(new Point(x,
+                Math.Exp(-Math.Pow(x - _mean, 2) / (2 * _variance)) / Math.Sqrt(_variance * 2 * Math.PI)));
 
-        return points.ToArray();
+        return points;
     }
 
-    private DataPoint[] GenerateExponentialDensity()
+    private List<Point> GenerateGaussianDistribution()
+    {
+        var l = _mean - 4 * Math.Sqrt(_variance) - 0.01;
+        var r = _mean + 4 * Math.Sqrt(_variance) + 0.01;
+
+        var densityPoints = new List<double>();
+
+        for (var x = l; x <= r; x += 0.01)
+            densityPoints.Add(Math.Exp(-Math.Pow(x - _mean, 2) / (2 * _variance)) / Math.Sqrt(_variance * 2 * Math.PI));
+
+        var points = new List<Point>();
+        for (var i = 1; i < densityPoints.Count - 1; ++i)
+            points.Add(new Point(l + 0.01 * i,
+                (i > 1 ? points[i - 2].Y : 0.0) + 0.01 * (densityPoints[i] + densityPoints[i - 1]) / 2.0));
+        return points;
+    }
+
+    private List<Point> GenerateExponentialDensity()
     {
         var lamba = 1 / _mean;
-        // 99-th percentile
         var r = 4.6 / lamba;
 
-        var points = new List<DataPoint>();
-        for (var x = -1.0; x < 0; x += 0.01)
-            points.Add(new DataPoint(x, 0));
+        var points = new List<Point>();
+        points.Add(new Point(-1, 0));
+        points.Add(new Point(0, -(1e-12)));
         for (var x = 0.0; x <= r; x += 0.01)
-            points.Add(new DataPoint(x, lamba * Math.Exp(-lamba * x)));
+            points.Add(new Point(x, lamba * Math.Exp(-lamba * x)));
 
-        return points.ToArray();
+        return points;
     }
 
-    private DataPoint[] GeneratePoissonDensity()
+    private List<Point> GenerateExponentialDistribution()
+    {
+        var lamba = 1 / _mean;
+        var r = 4.6 / lamba;
+
+        var points = new List<Point>();
+        points.Add(new Point(-1, 0));
+        points.Add(new Point(0, 0));
+        for (var x = 0.0; x <= r; x += 0.01)
+            points.Add(new Point(x, 1 - Math.Exp(-lamba * x)));
+        return points;
+    }
+
+    private List<Point> GeneratePoissonDensity()
     {
         var lamba = _mean;
-        // 99-th percentile
         var kMax = (int)(lamba + 3 * Math.Sqrt(lamba));
 
-        var points = new List<DataPoint>();
+        var points = new List<Point>();
         for (var k = -5; k < 0; ++k)
-            points.Add(new DataPoint(k, 0));
-        points.Add(new DataPoint(0, Math.Exp(-lamba)));
-        for (var k = 1; k <= kMax; ++k)
-            points.Add(new DataPoint(k, points.Last().Y * lamba / k));
+            points.Add(new Point(k, 0));
 
-        return points.ToArray();
+        points.Add(new Point(0, Math.Exp(-lamba)));
+        for (var k = 1; k <= kMax; ++k)
+            points.Add(new Point(k, points.Last().Y * lamba / k));
+
+        return points;
     }
 
-    private DataPoint[] GenerateErlangDensity()
+    private List<Point> GeneratePoissonDistribution()
+    {
+        var lamba = _mean;
+        var kMax = (int)(lamba + 3 * Math.Sqrt(lamba));
+
+        var points = new List<Point>();
+        var pdfValues = new List<double>();
+        for (var k = -5; k <= 0; ++k)
+            points.Add(new Point(k, 0));
+
+        points.Add(new Point(0, Math.Exp(-lamba)));
+        pdfValues.Add(Math.Exp(-lamba));
+        for (var k = 1; k <= kMax; ++k)
+        {
+            pdfValues.Add(pdfValues.Last() * lamba / k);
+            points.Add(new Point(k-1e-6, points.Last().Y));
+            points.Add(new Point(k, points.Last().Y + pdfValues.Last()));
+        }
+        points.Add(new Point(points.Last().X+1-1e-6, points.Last().Y));
+
+        return points;
+    }
+
+    private List<Point> GenerateErlangDensity()
     {
         var lambda = _mean / _variance;
-        var k = (int)(Math.Round(_mean * _mean / _variance));
+        var k = (int)Math.Round(_mean * _mean / _variance);
 
         var factK = 1;
-        for (int i = 2; i < k; ++i)
+        for (var i = 2; i < k; ++i)
             factK *= i;
-        var points = new List<DataPoint>();
-        for(var x = -1.0; x < 0; x+=0.01)
-            points.Add(new DataPoint(x, 0));
+
+        var points = new List<Point>();
+        points.Add(new Point(-1, 0));
+        points.Add(new Point(0, 0));
+        double xMax;
+        if (k == 1)
+            xMax = 4.6 / lambda;
+        else if (k <= 10)
+            xMax = (k + 4 * Math.Sqrt(k)) * lambda;
+        else if (k <= 50)
+            xMax = (k + 3.5 * Math.Sqrt(k)) * lambda;
+        else
+            xMax = (k + 3 * Math.Sqrt(k)) * lambda;
+
+        for (var x = 0.0; x <= xMax; x += 0.01)
+            points.Add(new Point(x, Math.Pow(lambda, k) * Math.Pow(x, k - 1) * Math.Exp(-lambda * x) / factK));
+
+        return points;
+    }
+
+    private List<Point> GenerateErlangDistribution()
+    {
+        var lambda = _mean / _variance;
+        var k = (int)Math.Round(_mean * _mean / _variance);
+
+        var factorials = new List<int>();
+        factorials.Add(1);
+        for (var i = 1; i < k; ++i)
+        {
+            factorials.Add(factorials.Last() * i);
+        }
+
+        var points = new List<Point>();
+        points.Add(new Point(-1, 0));
+        points.Add(new Point(0, 0));
 
         double xMax;
         if (k == 1)
@@ -253,15 +351,19 @@ public class MainWindowViewModel : ReactiveObject
             xMax = (k + 3.5 * Math.Sqrt(k)) * lambda;
         else
             xMax = (k + 3 * Math.Sqrt(k)) * lambda;
+
         for (var x = 0.0; x <= xMax; x += 0.01)
         {
-            points.Add(new DataPoint(x, (Math.Pow(lambda, k) * Math.Pow(x, k-1) * Math.Exp(-lambda*x))/factK));
+            var sumLambaXInNXFact = 1.0;
+            for (var i = 1; i < k; ++i)
+                sumLambaXInNXFact += Math.Pow(lambda * x, i)/factorials[i];
+            points.Add(new Point(x, 1-Math.Exp(-lambda * x) * sumLambaXInNXFact));
         }
 
-        return points.ToArray();
+        return points;
     }
 
-    private DataPoint[] GenerateDensityPoints()
+    private List<Point> GenerateDensityPoints()
     {
         return _distribution switch
         {
@@ -272,6 +374,30 @@ public class MainWindowViewModel : ReactiveObject
             DistributionType.Erlang => GenerateErlangDensity(),
             _ => GenerateUniformDensity()
         };
+    }
+
+    private List<Point> GenerateDistributionPoints()
+    {
+        return _distribution switch
+        {
+            DistributionType.Uniform => GenerateUniformDistribution(),
+            DistributionType.Gaussian => GenerateGaussianDistribution(),
+            DistributionType.Exponential => GenerateExponentialDistribution(),
+            DistributionType.Poisson => GeneratePoissonDistribution(),
+            DistributionType.Erlang => GenerateErlangDistribution(),
+            _ => GenerateUniformDistribution()
+        };
+    }
+
+    private void CreateDistributionPlot(string distributionName)
+    {
+        var points = GenerateDistributionPoints();
+
+        // Сохраняем данные для графика
+        DistributionPlot = points;
+
+        // Сохраняем заголовок графика
+        DistributionPlotTitle = $"{distributionName} график функции распределения";
     }
 
     private string DistributionName()
@@ -286,4 +412,17 @@ public class MainWindowViewModel : ReactiveObject
             _ => "Равномерное распределение"
         };
     }
+}
+
+// Вспомогательный класс Point
+public class Point
+{
+    public Point(double x, double y)
+    {
+        X = x;
+        Y = y;
+    }
+
+    public double X { get; set; }
+    public double Y { get; set; }
 }

@@ -3,6 +3,9 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
+using ReactiveUI;
+using ReactiveUI.Avalonia;
 using lab.ViewModels;
 using lab.Views;
 
@@ -17,6 +20,9 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        // Настраиваем ReactiveUI для работы с Avalonia
+        RxApp.MainThreadScheduler = AvaloniaScheduler.Instance;
+        
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 

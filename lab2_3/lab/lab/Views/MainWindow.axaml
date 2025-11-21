@@ -3,7 +3,7 @@
         xmlns:vm="using:lab.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:oxy="using:OxyPlot.Avalonia"
+        xmlns:scottPlot="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
         xmlns:local="clr-namespace:lab.Models"
         xmlns:conv="clr-namespace:lab.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -78,8 +78,14 @@
                            Foreground="Black" />
             </Button>
         </StackPanel>
-        <StackPanel Grid.Column="1">
-            <oxy:PlotView Model="{Binding DensityPlot}" Margin="10" />
+        <StackPanel Grid.Column="1" Spacing="10">
+            <scottPlot:AvaPlot x:Name="DensityPlot"
+                            DockPanel.Dock="Top" 
+                            Height="300"/>
+            
+            <scottPlot:AvaPlot x:Name="DistributionPlot"
+                               DockPanel.Dock="Top" 
+                               Height="300"/>
         </StackPanel>
     </Grid>
 
