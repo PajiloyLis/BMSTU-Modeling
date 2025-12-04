@@ -189,18 +189,20 @@ public class MainFrame extends javax.swing.JFrame {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(serviceSecondTextField))))
                             .addGroup(layout.createSequentialGroup()
+                                .addComponent(rejectionCheckBox)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel10)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(generatorCountTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(generatorCountTextField))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel11)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(probabilityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(probabilityTextField))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel12)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(timeStepTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(rejectionCheckBox))
+                                .addComponent(timeStepTextField)))
                         .addContainerGap())))
             .addGroup(layout.createSequentialGroup()
                 .addGap(157, 157, 157)
@@ -297,6 +299,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void generatorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generatorComboBoxActionPerformed
         try{
+            generatorErrorLabel.setText("");
             String generatorString = Objects.requireNonNull(generatorComboBox.getSelectedItem()).toString();
             DistributionsType generatorDistribution = DistributionsType.fromDisplayName(generatorString);
             
@@ -355,7 +358,8 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void serviceComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serviceComboBoxActionPerformed
         try{
-            String serviceString = Objects.requireNonNull(generatorComboBox.getSelectedItem()).toString();
+            serviceErrorLabel.setText("");
+            String serviceString = Objects.requireNonNull(serviceComboBox.getSelectedItem()).toString();
             DistributionsType serviceDistribution = DistributionsType.fromDisplayName(serviceString);
             
             switch(serviceDistribution){
@@ -424,6 +428,9 @@ public class MainFrame extends javax.swing.JFrame {
         int requestsCount;
         double rejectProbability, timeStep;
         boolean rejectedReturn;
+        serviceErrorLabel.setText("");
+        generatorErrorLabel.setText("");
+        paramsErrorLabel.setText("");
         
         try{
             requestsCount = Integer.parseInt(generatorCountTextField.getText());
@@ -451,7 +458,8 @@ public class MainFrame extends javax.swing.JFrame {
         String generatorString, serviceString;
         DistributionsType generatorDistribution, serviceDistribution;
         double generatorFirstParam, generatorSecondParam, serviceFirstParam, serviceSecondParam;
-        Simulator simulator;
+        RandomGenerable generator = new UniformDistributionRandom(0, 1);
+        Simulator simulator = new Simulator(generator, new UniformDistributionRandom(0, 1), requestsCount, rejectProbability, timeStep, rejectedReturn);
         try{
             generatorString = Objects.requireNonNull(generatorComboBox.getSelectedItem()).toString();
             generatorDistribution = DistributionsType.fromDisplayName(generatorString);
@@ -461,31 +469,31 @@ public class MainFrame extends javax.swing.JFrame {
                 {
                     generatorFirstParam = Double.parseDouble(generatorFirstTextField.getText());
                     generatorSecondParam = Double.parseDouble(generatorSecondTextField.getText());
-                    simulator = new Simulator(new UniformDistributionRandom(Math.min(generatorFirstParam, generatorSecondParam), Math.max(generatorFirstParam, generatorSecondParam)), requestsCount, rejectProbability, timeStep, rejectedReturn);
+                    generator = new UniformDistributionRandom(Math.min(generatorFirstParam, generatorSecondParam), Math.max(generatorFirstParam, generatorSecondParam));
                 }
                 case DistributionsType.NORMAL ->
                 {
                     
                     generatorFirstParam = Double.parseDouble(generatorFirstTextField.getText());
                     generatorSecondParam = Double.parseDouble(generatorSecondTextField.getText());
-                    simulator = new Simulator(new NormalDistributionRandom(generatorFirstParam, generatorSecondParam), requestsCount, rejectProbability, timeStep, rejectedReturn);
+                    generator = new NormalDistributionRandom(generatorFirstParam, generatorSecondParam);
                 }
                 case DistributionsType.ERLANG ->
                 {
                     
                     generatorFirstParam = Double.parseDouble(generatorFirstTextField.getText());
                     generatorSecondParam = Double.parseDouble(generatorSecondTextField.getText());
-                    simulator = new Simulator(new ErlangDistributionRandom((int)generatorFirstParam, generatorSecondParam), requestsCount, rejectProbability, timeStep, rejectedReturn);
+                    generator = new ErlangDistributionRandom((int)generatorFirstParam, generatorSecondParam);
                 }
                 case DistributionsType.EXPONENTIAL ->
                 {
                     generatorFirstParam = Double.parseDouble(generatorFirstTextField.getText());
-                    simulator = new Simulator(new ExponentialDistributionRandom(generatorFirstParam), requestsCount, rejectProbability, timeStep, rejectedReturn);
+                    generator = new ExponentialDistributionRandom(generatorFirstParam);
                 }
                 case DistributionsType.POISSON ->
                 {
                     generatorFirstParam = Double.parseDouble(generatorFirstTextField.getText());
-                    simulator = new Simulator(new PoissonDistributionRandom(generatorFirstParam), requestsCount, rejectProbability, timeStep, rejectedReturn);
+                    generator = new PoissonDistributionRandom(generatorFirstParam);
                 }
             }
         }
@@ -546,31 +554,31 @@ public class MainFrame extends javax.swing.JFrame {
                 {
                     serviceFirstParam = Double.parseDouble(serviceFirstTextField.getText());
                     serviceSecondParam = Double.parseDouble(serviceSecondTextField.getText());
-                    simulator = new Simulator(new UniformDistributionRandom(Math.min(serviceFirstParam, serviceSecondParam), Math.max(serviceFirstParam, serviceSecondParam)), requestsCount, rejectProbability, timeStep, rejectedReturn);
+                    simulator = new Simulator(generator, new UniformDistributionRandom(Math.min(serviceFirstParam, serviceSecondParam), Math.max(serviceFirstParam, serviceSecondParam)), requestsCount, rejectProbability, timeStep, rejectedReturn);
                 }
                 case DistributionsType.NORMAL ->
                 {
                     
                     serviceFirstParam = Double.parseDouble(serviceFirstTextField.getText());
                     serviceSecondParam = Double.parseDouble(serviceSecondTextField.getText());
-                    simulator = new Simulator(new NormalDistributionRandom(serviceFirstParam, serviceSecondParam), requestsCount, rejectProbability, timeStep, rejectedReturn);
+                    simulator = new Simulator(generator, new NormalDistributionRandom(serviceFirstParam, serviceSecondParam), requestsCount, rejectProbability, timeStep, rejectedReturn);
                 }
                 case DistributionsType.ERLANG ->
                 {
                     
                     serviceFirstParam = Double.parseDouble(serviceFirstTextField.getText());
                     serviceSecondParam = Double.parseDouble(serviceSecondTextField.getText());
-                    simulator = new Simulator(new ErlangDistributionRandom((int)serviceFirstParam, serviceSecondParam), requestsCount, rejectProbability, timeStep, rejectedReturn);
+                    simulator = new Simulator(generator, new ErlangDistributionRandom((int)serviceFirstParam, serviceSecondParam), requestsCount, rejectProbability, timeStep, rejectedReturn);
                 }
                 case DistributionsType.EXPONENTIAL ->
                 {
                     serviceFirstParam = Double.parseDouble(serviceFirstTextField.getText());
-                    simulator = new Simulator(new ExponentialDistributionRandom(serviceFirstParam), requestsCount, rejectProbability, timeStep, rejectedReturn);
+                    simulator = new Simulator(generator, new ExponentialDistributionRandom(serviceFirstParam), requestsCount, rejectProbability, timeStep, rejectedReturn);
                 }
                 case DistributionsType.POISSON ->
                 {
                     serviceFirstParam = Double.parseDouble(serviceFirstTextField.getText());
-                    simulator = new Simulator(new PoissonDistributionRandom(serviceFirstParam), requestsCount, rejectProbability, timeStep, rejectedReturn);
+                    simulator = new Simulator(generator, new PoissonDistributionRandom(serviceFirstParam), requestsCount, rejectProbability, timeStep, rejectedReturn);
                 }
             }
         }
@@ -620,6 +628,8 @@ public class MainFrame extends javax.swing.JFrame {
             serviceErrorLabel.setForeground(Color.red);
             return;
         }
+        int eventQueueLength = simulator.eventSimulation();
+        eventPrincipleTextField.setText(Integer.toString(eventQueueLength));
     }//GEN-LAST:event_simulateButtonActionPerformed
 
     

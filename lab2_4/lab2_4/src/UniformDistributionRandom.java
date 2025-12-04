@@ -18,7 +18,7 @@ public class UniformDistributionRandom implements RandomGenerable{
     {
         this.a = a;
         this.b = b;
-        Random rnd = new Random();
+        this.rnd = new Random();
     }
     
     public double GenerateRandomNumber()
