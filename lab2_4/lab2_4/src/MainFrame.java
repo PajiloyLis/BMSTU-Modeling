@@ -138,6 +138,10 @@ public class MainFrame extends javax.swing.JFrame {
 
         paramsErrorLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
+        eventPrincipleTextField.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        stepPrincipleTextField.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -630,6 +634,8 @@ public class MainFrame extends javax.swing.JFrame {
         }
         int eventQueueLength = simulator.eventSimulation();
         eventPrincipleTextField.setText(Integer.toString(eventQueueLength));
+        int stepQueueLength = simulator.stepSimulation();
+        stepPrincipleTextField.setText(Integer.toString(stepQueueLength));
     }//GEN-LAST:event_simulateButtonActionPerformed
 
     

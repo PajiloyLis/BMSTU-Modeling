@@ -2,8 +2,10 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Queue;
 import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -42,6 +44,7 @@ public class Simulator {
         {
             queueEvents.put(generator.GenerateRandomNumber(), new SimulationEvent(i, EventType.TOQUEUE));
         }
+        
 //        NavigableMap<Double, ArrayList<SimulationEvent>> newEvents = new TreeMap<>();
 //        double maxGoToServiceTime = 0;
 //        for(Double time: events.keySet())
@@ -106,7 +109,76 @@ public class Simulator {
             timesToQueue.addLast(generator.GenerateRandomNumber());
         }
         Collections.sort(timesToQueue);
-        
-        return 0;
+        Queue<Double> queue = new LinkedList<>();
+        int generatorInd = 0;
+        double curTime = 0, lastServiceTime = 0;
+        boolean serviceBusy=false;
+        Random rnd = new Random();
+        int maxQueueSize = 0;
+        while(true)
+        {
+            
+            curTime += timeStep;
+            while(generatorInd < timesToQueue.size() && timesToQueue.get(generatorInd) <= curTime)
+            {
+                queue.offer(timesToQueue.get(generatorInd++));
+            }
+            if(rejectedReturn){
+                 if(serviceBusy)
+                {
+                    if(lastServiceTime <=curTime)
+                    {
+                        if(rnd.nextDouble() <= rejectProbability)
+                        {
+                            queue.offer(curTime);
+                        }
+                        else{
+                            serviceBusy = false;
+                            if(queue.size() > 0)
+                            {
+                                queue.poll();
+                                lastServiceTime += service.GenerateRandomNumber();
+                                serviceBusy = true;
+                            }
+                        }
+                    }
+                }
+                else{
+                    if (queue.size() > 0)
+                    {
+                        double start = queue.poll();
+                        lastServiceTime = start + service.GenerateRandomNumber();
+                        serviceBusy = true;
+                    }
+                }
+            }
+            else{
+                if(serviceBusy)
+                {
+                    if(lastServiceTime <=curTime)
+                    {
+                        serviceBusy = false;
+                        if(queue.size() > 0)
+                        {
+                            double start = queue.poll();
+                            lastServiceTime = start + service.GenerateRandomNumber();
+                            serviceBusy = true;
+                        }
+                    }
+                }
+                else{
+                    if (queue.size() > 0)
+                    {
+                        double start = queue.poll();
+                        lastServiceTime += service.GenerateRandomNumber();
+                        serviceBusy = true;
+                    }
+                }
+            }
+            if(queue.size() ==0 && timesToQueue.size() == generatorInd && serviceBusy == false)
+                break;
+            maxQueueSize = Math.max(maxQueueSize, queue.size());
+        }
+        return maxQueueSize;
     }
 }
