@@ -9,7 +9,7 @@
  */
 public class ServiceEvent extends SimulationEvent{
     private int serviceNumber;
-    ServiceEvent(int serviceNubmer, EventType type)
+    ServiceEvent(int serviceNumber, EventType type)
     {
         super(type);
         

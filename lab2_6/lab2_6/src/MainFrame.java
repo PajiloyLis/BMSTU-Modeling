@@ -205,11 +205,11 @@ public class MainFrame extends javax.swing.JFrame {
         GeneratorSecondParamLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         GeneratorSecondParamLabel.setText("b:");
 
-        Service1FirstParamTextField.setText("5");
+        Service1FirstParamTextField.setText("13");
         Service1FirstParamTextField.setEnabled(false);
         Service1FirstParamTextField.addActionListener(this::Service1FirstParamTextFieldActionPerformed);
 
-        Service1SecondParamTextField.setText("7");
+        Service1SecondParamTextField.setText("15");
         Service1SecondParamTextField.setEnabled(false);
         Service1SecondParamTextField.addActionListener(this::Service1SecondParamTextFieldActionPerformed);
 
@@ -240,11 +240,11 @@ public class MainFrame extends javax.swing.JFrame {
         Service2FirstParamLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         Service2FirstParamLabel.setText("a:");
 
-        Service2FirstParamTextField.setText("6");
+        Service2FirstParamTextField.setText("14");
         Service2FirstParamTextField.setEnabled(false);
         Service2FirstParamTextField.addActionListener(this::Service2FirstParamTextFieldActionPerformed);
 
-        Service2SecondParamTextField.setText("8");
+        Service2SecondParamTextField.setText("16");
         Service2SecondParamTextField.setEnabled(false);
         Service2SecondParamTextField.addActionListener(this::Service2SecondParamTextFieldActionPerformed);
 
@@ -341,11 +341,11 @@ public class MainFrame extends javax.swing.JFrame {
         Service3FirstParamLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         Service3FirstParamLabel.setText("a:");
 
-        Service3FirstParamTextField.setText("7");
+        Service3FirstParamTextField.setText("12");
         Service3FirstParamTextField.setEnabled(false);
         Service3FirstParamTextField.addActionListener(this::Service3FirstParamTextFieldActionPerformed);
 
-        Service3SecondParamTextField.setText("9");
+        Service3SecondParamTextField.setText("16");
         Service3SecondParamTextField.setEnabled(false);
         Service3SecondParamTextField.addActionListener(this::Service3SecondParamTextFieldActionPerformed);
 
@@ -682,9 +682,7 @@ public class MainFrame extends javax.swing.JFrame {
                                             .addComponent(jLabel17)
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(Operator1AverageTimeLabel))))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(Operator2RequestsProccessedCountLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(Operator2RejectProbabilityLabel)))
+                                .addComponent(Operator2RejectProbabilityLabel))
                             .addComponent(ErrorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel37)
@@ -699,11 +697,11 @@ public class MainFrame extends javax.swing.JFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel34)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(OperatorsTotalRequestsCountLabel)
-                                            .addComponent(Operator3AverageTimeLabel)
-                                            .addComponent(OperatorsAverageTimesLabel)
-                                            .addComponent(OperatorsRejectProbabilityLabel)))))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(Operator3AverageTimeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(OperatorsAverageTimesLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(OperatorsRejectProbabilityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(OperatorsTotalRequestsCountLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel30)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -716,16 +714,19 @@ public class MainFrame extends javax.swing.JFrame {
                                             .addGroup(layout.createSequentialGroup()
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                     .addComponent(Operator3RejectProbabilityLabel)
-                                                    .addComponent(Operator3RequestsProccessedCountLabel))
+                                                    .addComponent(Operator3RequestsProccessedCountLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(jLabel53))))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                             .addGroup(layout.createSequentialGroup()
                                                 .addComponent(jLabel27)
                                                 .addGap(18, 18, 18)
                                                 .addComponent(Operator2TotalTimeLabel))
-                                            .addComponent(jLabel25))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jLabel25)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(Operator2RequestsProccessedCountLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                         .addGap(18, 18, 18)
                                         .addComponent(jLabel51)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1011,7 +1012,7 @@ public class MainFrame extends javax.swing.JFrame {
                                     .addComponent(Service3FirstParamTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(Service3SecondParamLabel)
                                     .addComponent(Service3SecondParamTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(12, 12, 12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel7)
                             .addComponent(jLabel63)

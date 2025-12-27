@@ -103,10 +103,14 @@ public class Statistic {
     }
     
     public double GetOperatorWorkingTime(int index){
+        if(operatorProcessed.get(index) == 0)
+            return 0.0;
         return operatorWorkingTime.get(index);
     }
     
     public double GetOperatorAverageWorkingTime(int index){
+        if(operatorProcessed.get(index) == 0)
+            return 0.0;
         return operatorWorkingTime.get(index)/operatorProcessed.get(index);
     }
     
@@ -134,10 +138,14 @@ public class Statistic {
     }
     
     public double GetKitchenWorkingTime(int index){
+        if(kitchenProcessed.get(index) == 0)
+            return 0.0;
         return kitchenWorkingTime.get(index);
     }
     
     public double GetKitchenAverageWorkingTime(int index){
+        if(kitchenProcessed.get(index) == 0)
+            return 0.0;
         return kitchenWorkingTime.get(index)/operatorProcessed.get(index);
     }
         
@@ -157,6 +165,8 @@ public class Statistic {
     }
     
     public double GetReleaseWorkingTime(int index){
+        if(releaseProcessed.get(index) == 0)
+            return 0.0;
         return releaseWorkingTime.get(index);
     }
     

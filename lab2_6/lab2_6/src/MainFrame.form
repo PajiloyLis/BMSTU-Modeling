@@ -195,10 +195,7 @@
                                       </Group>
                                   </Group>
                               </Group>
-                              <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                                  <Component id="Operator2RequestsProccessedCountLabel" min="-2" pref="12" max="-2" attributes="0"/>
-                                  <Component id="Operator2RejectProbabilityLabel" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="Operator2RejectProbabilityLabel" alignment="1" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="ErrorLabel" min="-2" pref="306" max="-2" attributes="0"/>
                           <Group type="102" attributes="0">
@@ -215,11 +212,11 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="jLabel34" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="OperatorsTotalRequestsCountLabel" min="-2" max="-2" attributes="0"/>
-                                          <Component id="Operator3AverageTimeLabel" min="-2" max="-2" attributes="0"/>
-                                          <Component id="OperatorsAverageTimesLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="OperatorsRejectProbabilityLabel" min="-2" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="Operator3AverageTimeLabel" max="32767" attributes="0"/>
+                                          <Component id="OperatorsAverageTimesLabel" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="OperatorsRejectProbabilityLabel" max="32767" attributes="0"/>
+                                          <Component id="OperatorsTotalRequestsCountLabel" alignment="0" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
@@ -235,8 +232,8 @@
                                           <Component id="Operator2AverageTimeLabel" min="-2" max="-2" attributes="0"/>
                                           <Group type="102" alignment="0" attributes="0">
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="Operator3RejectProbabilityLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                                  <Component id="Operator3RequestsProccessedCountLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="Operator3RejectProbabilityLabel" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="Operator3RequestsProccessedCountLabel" alignment="1" min="-2" pref="20" max="-2" attributes="0"/>
                                               </Group>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Component id="jLabel53" min="-2" max="-2" attributes="0"/>
@@ -244,13 +241,17 @@
                                       </Group>
                                   </Group>
                                   <Group type="102" attributes="0">
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Group type="102" attributes="0">
                                               <Component id="jLabel27" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace type="separate" max="-2" attributes="0"/>
                                               <Component id="Operator2TotalTimeLabel" min="-2" max="-2" attributes="0"/>
                                           </Group>
-                                          <Component id="jLabel25" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Group type="102" attributes="0">
+                                              <Component id="jLabel25" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace max="32767" attributes="0"/>
+                                              <Component id="Operator2RequestsProccessedCountLabel" min="-2" pref="20" max="-2" attributes="0"/>
+                                          </Group>
                                       </Group>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Component id="jLabel51" min="-2" max="-2" attributes="0"/>
@@ -627,7 +628,7 @@
                               </Group>
                           </Group>
                       </Group>
-                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel63" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -860,7 +861,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="Service1FirstParamTextField">
       <Properties>
-        <Property name="text" type="java.lang.String" value="5"/>
+        <Property name="text" type="java.lang.String" value="13"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
@@ -869,7 +870,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="Service1SecondParamTextField">
       <Properties>
-        <Property name="text" type="java.lang.String" value="7"/>
+        <Property name="text" type="java.lang.String" value="15"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
@@ -958,7 +959,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="Service2FirstParamTextField">
       <Properties>
-        <Property name="text" type="java.lang.String" value="6"/>
+        <Property name="text" type="java.lang.String" value="14"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
@@ -967,7 +968,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="Service2SecondParamTextField">
       <Properties>
-        <Property name="text" type="java.lang.String" value="8"/>
+        <Property name="text" type="java.lang.String" value="16"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
@@ -1226,7 +1227,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="Service3FirstParamTextField">
       <Properties>
-        <Property name="text" type="java.lang.String" value="7"/>
+        <Property name="text" type="java.lang.String" value="12"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
@@ -1235,7 +1236,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="Service3SecondParamTextField">
       <Properties>
-        <Property name="text" type="java.lang.String" value="9"/>
+        <Property name="text" type="java.lang.String" value="16"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>

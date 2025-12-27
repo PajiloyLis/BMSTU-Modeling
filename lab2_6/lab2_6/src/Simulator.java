@@ -183,6 +183,7 @@ public class Simulator {
                         while(operators.get(i).GetRejectionValue()<operators.get(i).GetRejectProbability() && preBoxOfficeCollectors.get(i).GetQueueLength()!=0 )
                         {
                             operators.get(i).SetRejectedCount(operators.get(i).GetRejectedCount()+1);
+                            statistic.AddOperatorRejectedCount(i, 1);
                             preBoxOfficeCollectors.get(i).Poll();
                         }
                         if(preBoxOfficeCollectors.get(i).GetQueueLength()!=0){
@@ -203,7 +204,7 @@ public class Simulator {
                 operatorFound = false;
                 for(int i = 0; i < kitchen.size(); ++i)
                 {
-                    if(!kitchen.get(i).GetIsBusy() && preKitchenCollector.GetQueueLength()!=0)
+                    if((!kitchen.get(i).GetIsBusy()) && preKitchenCollector.GetQueueLength()!=0)
                     {
                         double serviceTime = kitchen.get(i).GetTime();
                         double toQueueTime = preKitchenCollector.Poll();
